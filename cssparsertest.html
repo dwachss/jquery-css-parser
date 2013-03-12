@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+<script src="jquery.livequery.js"></script>
+<script src="jquery.gradient.js"></script>
+<script src="jquery.parsecss.js" ></script>
+<title>jQuery-based CSS parser</title>
+<style>
+	pre {
+		background: #F4F4F4;
+		border: 1px solid #B2B2B2;
+		overflow: auto;
+	}
+</style>
+<style>
+	#jquery-example > div {
+		-jquery: $(this).append('<span>. A really excellent example</span>');
+		-jquery-gradient: #abcdef #fedcba vertical;
+	}
+	#toggle-example div {
+		height: 2em;
+	}
+	#toggle-example div div {
+		border: 1px solid purple;
+	}
+	#toggle-example > div:first div{
+		-jquery-show: fadeIn 2000;
+		-jquery-hide: 2000;
+	}
+	#toggle-example > div:last div{
+		-jquery-hide: fold slow;
+	}
+	#live-example > div {
+		-jquery-gradient: background-color aqua ! /* live */;
+		-jquery-hide: 2000 ! ;
+		-jquery-show: slow ! ;
+	}
+	.bold > div {
+		-jquery: $(this).append('<span>[I am bold!]</span>') ! $('span', this).remove();
+		-jquery-css: font-weight bold ! font-weight normal ;/* match/unmatch actions */
+	}
+		
+</style>
+</head>
+<body>
+<p>The &lt;style&gt; elements for this page are:</p>
+<pre id="styles">You are going to have to use Javascript to see the javascript in action!</pre>
+
+<p>(I'm using a <a href="/blog/2009/01/15/gradient-on-steroids/">variation</a> on Brandon Aaron's <a href="http://plugins.jquery.com/project/gradient">gradient plugin</a>)</p>
+
+<p>Press the button to call the CSS parser was called with <code>$().parsecss($.parsecss.jquery, true)</code>: 
+<input id="startParser" type="button" value="Start Parser"/></p>
+
+<pre><code class="language-html demo">
+	&lt;div id=&quot;jquery-example&quot;&gt;
+		&lt;div&gt;This is an example&lt;/div&gt;
+	&lt;/div&gt;
+</code></pre>
+
+<pre><code class="language-html demo">
+	&lt;div id=&quot;toggle-example&quot;&gt;
+		&lt;div&gt;&lt;div&gt;This is an example&lt;/div&gt;&lt;/div&gt;
+		&lt;div&gt;&lt;div&gt;This is an example&lt;/div&gt;&lt;/div&gt;
+	&lt;/div&gt;
+</code></pre>
+<input type="button" id="toggle-button" value="Toggle the Example" />
+
+<pre><code class="language-html demo">
+	&lt;div id=&quot;live-example&quot;&gt;
+		&lt;div&gt;Example number 1&lt;/div&gt;
+	&lt;/div&gt;
+</code></pre>
+<input type="button" id="live-button" value="Add a Live Example" />
+<input type="button" id="live-class-button" value="Toggle the Bold Class" />
+<input type="button" id="live-show" value="Show/Hide the Live Example" />
+
+<pre><code class="language-html">
+	&lt;div id=&quot;style-attribute&quot; style=&quot;-jquery-gradient: {from: 'blue', to: 'backgroundColor', direction: 'vertical', length: '50%'}&quot;&gt;
+		Using the inconsistently performing second argument to $().parsecss to parse style attributes
+		in all elements.
+	&lt;/div&gt;
+</code></pre>
+<div id="style-attribute" style="-jquery-gradient: {from: 'blue', to: 'backgroundColor', direction: 'vertical', length: '50%'}">
+	Using the inconsistently performing second argument to <code class="language-javascript">$().parsecss</code> to parse style attributes
+	in all elements.
+</div>
+
+<hr/>
+
+<h2>Test the parts of the parser:</h2>
+
+<p><code>$.parsecss()</code>: enter CSS to be parsed and press the button to see the resulting object.</p>
+<textarea rows="10" cols="100"></textarea><input type="button" id="parsecss" value="ParseCSS"/><div id="parsed"></div><br/>
+
+<p><code>$.parsecss.parseArguments</code>: Enter a string in typical CSS space-delimited form (like '1px solid black') and see the resulting array.</p>
+<input /><input type="button" id="parseargs" value="Parse Arguments"/><span></span><br />
+
+<p><code>$.parsecss.mediumApplies</code>: Enter string for the media attribute (like 'screen, presentation')and see if it applies to the current document</p>
+<input /><input type="button" id="media" value="Media"/><span></span><br />
+
+<p><code>$.parsecss.isValidSelector</code>: Enter a selector (like 'div &gt; p') and see if your browser recognizes it.</p>
+<input /><input type="button" id="valid" value="Valid Selector"/><span></span><br />
+
+<p><code>$.parsecss.styleAttributes</code>: Experimental: Enter HTML to be parsed and press the button to see the resulting object.</p>
+<textarea rows="10" cols="100"></textarea><input type="button" id="parsestyleattrs" value="Style Attributes"/><div id="styleattrs"></div><br/>
+
+<script>
+	// highly dangerous (for XSS) but useful way to avoid repeating code
+	// executes all code samples with class "demo"
+	// the filter is to prevent execution of code in the comments
+	// note: actual <script> elements will execute before any demos, while
+	// <script>$(function(){...}/script> code will execute after demos
+	$(function(){
+		$('code.demo.language-html').each(function(){
+			var pre = $(this).parents('pre'); // insert after the enclosing "pre" if it exists
+			var target = pre.length ? pre : this
+			$($.trim($(this).text())).insertAfter(target);
+		});
+		eval($('code.demo.language-javascript').text());
+	});
+</script>
+<script>
+	$(document).ready(function(){
+		$('#startParser').click(function(){$(document).parsecss($.parsecss.jquery, true)});
+		$('#toggle-button').click(function(){$('#toggle-example div div').toggle()});
+		$('#live-button').click(function(){
+			var count = $('#live-example > div').length+1;
+			$('<div>').text('Example number '+count).appendTo($('#live-example'));
+		});
+		$('#live-class-button').click(function(){$('#live-example').toggleClass('bold')});
+		$('#live-show').click(function(){$('#live-example > div').toggle()});
+		$('#parsecss').click(function(){
+			$('#parsed').empty();
+			$.parsecss($(this).prev().val(), function(css) {$('<div/>').text(toSource(css)).appendTo('#parsed')});
+		});
+		$('#parseargs').click(function(){
+			$(this).next().html(JSON.stringify($.parsecss.parseArguments($.trim($(this).prev().val()))));
+		});
+		$('#media').click(function(){
+			$(this).next().html($.parsecss.mediumApplies($(this).prev().val()).toString());
+		});
+		$('#valid').click(function(){
+			$(this).next().html ($.parsecss.isValidSelector($(this).prev().val()).toString());
+		});
+		$('#parsestyleattrs').click(function(){
+			$.parsecss.styleAttributes($(this).prev().val(), function(css){
+				$('#styleattrs').empty();
+				$('<div/>').text(toSource(css)).appendTo('#styleattrs');				
+			});
+		});
+		$('#styles').text($('style').map(function(){return this.innerHTML}).get().join(''));
+	});
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+
+The jQuery based CSS parser.
+See http://bililite.com/blog/2009/01/16/jquery-css-parser/ documentation
+jquery.cssparser.js is the actual code
+
+cssparsertest.html is a demo page
+jquery.gradient.js is a modified version of Brandon Aaron's gradient plugin
+jquery.livequery.js is Brandon Aaron's livequery ( https://github.com/brandonaaron/livequery )
