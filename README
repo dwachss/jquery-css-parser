@@ -1,6 +1,6 @@
-
 The jQuery based CSS parser.
-See http://bililite.com/blog/2009/01/16/jquery-css-parser/ documentation
+See http://bililite.com/blog/2009/01/16/jquery-css-parser/ for the documentation.
+
 jquery.cssparser.js is the actual code
 
 cssparsertest.html is a demo page
