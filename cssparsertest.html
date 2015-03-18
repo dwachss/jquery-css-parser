@@ -134,7 +134,7 @@
 		$('#live-show').click(function(){$('#live-example > div').toggle()});
 		$('#parsecss').click(function(){
 			$('#parsed').empty();
-			$.parsecss($(this).prev().val(), function(css) {$('<div/>').text(toSource(css)).appendTo('#parsed')});
+			$.parsecss($(this).prev().val(), function(css) {$('<div/>').text(JSON.stringify(css)).appendTo('#parsed')});
 		});
 		$('#parseargs').click(function(){
 			$(this).next().html(JSON.stringify($.parsecss.parseArguments($.trim($(this).prev().val()))));
@@ -148,7 +148,7 @@
 		$('#parsestyleattrs').click(function(){
 			$.parsecss.styleAttributes($(this).prev().val(), function(css){
 				$('#styleattrs').empty();
-				$('<div/>').text(toSource(css)).appendTo('#styleattrs');				
+				$('<div/>').text(JSON.stringify(css)).appendTo('#styleattrs');				
 			});
 		});
 		$('#styles').text($('style').map(function(){return this.innerHTML}).get().join(''));
